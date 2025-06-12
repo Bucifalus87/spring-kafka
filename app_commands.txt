@@ -1,0 +1,30 @@
+to compose the podman-compose.yml: podman-compose -f podman-compose.yml up with the optional -d
+
+run: podman ps to check if the kafka container is running. (optional)
+
+to enter into the kafka container: podman exec -it kafka bash
+then inside the container: remember to leave a space between string or int and \
+kafka-topics --create \
+  --bootstrap-server localhost:9092 \
+  --replication-factor 1 \
+  --partitions 1 \
+  --topic string_topic
+
+now verify:
+
+kafka-topics --describe --bootstrap-server localhost:9092 --topic string_topic
+
+to exist de container type: exit
+
+to test the app use postman or curl
+curl:
+
+curl -X POST http://localhost:8081/kafka/send \
+  -H "Content-Type: text/plain" \
+  -d "Message to string_topic"
+
+Postman
+Method: POST to http://localhost:8081/kafka/send
+body: Raw text.
+and in the body just type: Hello Kafka
+if everything works you should see 200ok in body response
