@@ -28,3 +28,56 @@ Method: POST to http://localhost:8081/kafka/send
 body: Raw text.
 and in the body just type: Hello Kafka
 if everything works you should see 200ok in body response
+
+
+
+
+THIS IS THE UPDATED VERSION OF INSTRUCTIONS FOR USING KAFKA APP
+# Start Kafka container
+To compose the podman-compose.yml:
+podman-compose -f podman-compose.yml up -d
+
+# (Optional) Check if the Kafka container is running
+podman ps
+
+# Create the topic
+Enter the Kafka container:
+podman exec -it kafka bash
+
+Inside the container (remember to leave a space between string or int and \):
+kafka-topics --create \
+  --bootstrap-server localhost:9092 \
+  --replication-factor 1 \
+  --partitions 1 \
+  --topic string_topic
+
+# (Optional) Verify the topic was created
+kafka-topics --describe --bootstrap-server localhost:9092 --topic string_topic
+
+Exit the container:
+exit
+
+# Start the Spring Boot application
+Run from the project directory (make sure your app is built):
+./mvnw spring-boot:run
+# or if built already:
+java -jar target/spring-kafka-0.0.1-SNAPSHOT.jar
+
+# Test the producer using curl or Postman
+
+## curl:
+curl -X POST http://localhost:8081/kafka/send \
+  -H "Content-Type: text/plain" \
+  -d "Hello Kafka"
+
+## Postman:
+Method: POST
+URL: http://localhost:8081/kafka/send
+Body: Raw > Text
+Content: Hello Kafka
+
+# If everything works:
+- You should get 200 OK as response.
+- In the console, the consumer will log the message and offset like:
+  Consumed message: Hello Kafka
+  Offset: 0, Partition: 0
